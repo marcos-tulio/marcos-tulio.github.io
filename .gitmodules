@@ -1,0 +1,3 @@
+[submodule "javascript-6502-emulator"]
+	path = javascript-6502-emulator
+	url = https://github.com/marcos-tulio/javascript-6502-emulator
