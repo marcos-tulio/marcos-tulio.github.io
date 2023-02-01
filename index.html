@@ -1,12 +1,150 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-  </head>
-  <body>
-    <a href="./javascript-6502-emulator/index.html">6502 Emulator</a>
-  </body>
-  </hmtl>
+<html lang="pt-br">
+	<head>
+		<meta charset='utf-8'>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>Projetos por Marcos Santos</title>
+		<meta name='viewport' content='width=device-width, initial-scale=1'>
+		<script src="https://cdn.tailwindcss.com/3.2.4"></script>
+		<style>
+			.content a{
+				display: flex;
+				height: 100%;
+				border: solid 1px #3f3f46;
+				padding: 1rem;
+				border-radius: .25rem;
+				min-width: 200px;
+				min-height: 250px;
+			}
+
+			.content a:hover{
+				background-color: #0d9488;
+				border-color: #0d9488;
+			}
+
+			svg{ fill: white;}
+		</style>
+	</head>
+	<body>
+		<div class="flex flex-col bg-neutral-800 text-white min-h-screen h-fit">
+			<!-- Title -->
+			<div class="bg-teal-600 flex min-h-[250px]">
+				<div class="flex flex-col m-auto text-center">
+					<div class="text-5xl my-4 font-bold w-fit mx-auto"><h1 class="bg-neutral-800 p-3">Projetos</h1></div>
+					<span>Deixo aqui disponível alguns dos meus projetos pessoais.</span>
+				</div>
+			</div>
+
+			<!-- Content -->
+			<div class="content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 h-full m-4 mx-2">
+				<a href="./javascript-6502-emulator/index.html">
+					<div class="m-auto text-center">
+						<div class="max-w-[80px] m-auto py-2">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="fill-white">
+								<!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+								<path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold">6502 Emulator</p>
+							<p class="text-sm">Emulador de um processador 6502 codificado em JS</p>
+						</div>
+					</div>
+				</a>
+
+				<a href="https://github.com/marcos-tulio/javascript-nes-emulator">
+					<div class="m-auto text-center">
+						<div class="max-w-[80px] m-auto py-2">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="fill-white"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M192 64C86 64 0 150 0 256S86 448 192 448H448c106 0 192-86 192-192s-86-192-192-192H192zM496 248c-22.1 0-40-17.9-40-40s17.9-40 40-40s40 17.9 40 40s-17.9 40-40 40zm-24 56c0 22.1-17.9 40-40 40s-40-17.9-40-40s17.9-40 40-40s40 17.9 40 40zM168 200c0-13.3 10.7-24 24-24s24 10.7 24 24v32h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H216v32c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h32V200z"/></svg>
+						</div>
+						<div>
+							<p class="font-bold">NES Emulator</p>
+							<p class="text-sm">Emulador de NES codificado em JS (ainda em produção)</p>
+						</div>
+					</div>
+				</a>
+
+				<a href="https://github.com/marcos-tulio/8-bit-computer-emulator">
+					<div class="m-auto text-center">
+						<div class="max-w-[80px] m-auto py-2">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="fill-white">
+								<!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+								<path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold">8-bit Computer Emulator</p>
+							<p class="text-sm">Emulador de um computador programável de 8 bits codificado em JAVA</p>
+						</div>
+					</div>
+				</a>
+
+				<a href="https://github.com/marcos-tulio/kodir.ino">
+					<div class="m-auto text-center">
+						<div class="max-w-[80px] m-auto py-2">
+							<svg viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><title>Kodi icon</title><path d="M12.03.047c-.226 0-.452.107-.669.324-.922.922-1.842 1.845-2.763 2.768-.233.233-.455.48-.703.695-.31.267-.405.583-.399.988.02 1.399.008 2.799.008 4.198 0 1.453-.002 2.907 0 4.36 0 .11.002.223.03.327.087.337.303.393.546.15 1.31-1.31 2.618-2.622 3.928-3.933l4.449-4.453c.43-.431.43-.905 0-1.336L12.697.37c-.216-.217-.442-.324-.668-.324zm7.224 7.23c-.223 0-.445.104-.65.309L14.82 11.37c-.428.429-.427.895 0 1.322l3.76 3.766c.44.44.908.44 1.346.002 1.215-1.216 2.427-2.433 3.644-3.647.182-.18.353-.364.43-.615v-.33c-.077-.251-.246-.436-.428-.617-1.224-1.22-2.443-2.445-3.666-3.668-.205-.205-.429-.307-.652-.307zM4.18 7.611c-.086.014-.145.094-.207.157L.209 11.572c-.28.284-.278.677.004.96l2.043 2.046c.59.59 1.177 1.182 1.767 1.772.169.168.33.139.416-.084.044-.114.062-.242.063-.364.004-1.283.004-2.567.004-3.851h-.002V8.184c0-.085-.01-.169-.022-.252-.019-.135-.072-.258-.207-.309a.186.186 0 0 0-.095-.012zm7.908 6.838c-.224 0-.447.106-.656.315L7.66 18.537c-.433.434-.433.899.002 1.334 1.215 1.216 2.43 2.43 3.643 3.649.18.18.361.354.611.433h.33c.244-.069.423-.226.598-.402 1.222-1.23 2.45-2.453 3.676-3.68.43-.43.427-.905-.004-1.338l-3.772-3.773c-.208-.208-.432-.311-.656-.31z"/></svg>
+						</div>
+						<div>
+							<p class="font-bold">kodir.ino</p>
+							<p class="text-sm">Controle remoto para o kodi feito com Arduino</p>
+						</div>
+					</div>
+				</a>
+
+				<a href="https://github.com/marcos-tulio/basic_tile_editor">
+					<div class="m-auto text-center">
+						<div class="max-w-[80px] m-auto py-2">
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve">
+								<path d="M31,16h-2v-2c0-0.6-0.4-1-1-1h-2v-2c0-0.6-0.4-1-1-1h-2V8h2c0.6,0,1-0.4,1-1V4c0-0.6-0.4-1-1-1h-3c-0.6,0-1,0.4-1,1v2h-2
+									c-0.6,0-1,0.4-1,1v3h-4V7c0-0.6-0.4-1-1-1h-2V4c0-0.6-0.4-1-1-1H7C6.4,3,6,3.4,6,4v3c0,0.6,0.4,1,1,1h2v2H7c-0.6,0-1,0.4-1,1v2H4
+									c-0.6,0-1,0.4-1,1v2H1c-0.6,0-1,0.4-1,1v9c0,0.6,0.4,1,1,1h3c0.6,0,1-0.4,1-1v-5h1v5c0,0.6,0.4,1,1,1h2v2c0,0.6,0.4,1,1,1h4
+									c0.6,0,1-0.4,1-1v-3c0-0.6-0.4-1-1-1h-3v-1h10v1h-3c-0.6,0-1,0.4-1,1v3c0,0.6,0.4,1,1,1h4c0.6,0,1-0.4,1-1v-2h2c0.6,0,1-0.4,1-1v-5
+									h1v5c0,0.6,0.4,1,1,1h3c0.6,0,1-0.4,1-1v-9C32,16.4,31.6,16,31,16z M14,19c0,0.6-0.4,1-1,1h-3c-0.6,0-1-0.4-1-1v-3c0-0.6,0.4-1,1-1
+									h3c0.6,0,1,0.4,1,1V19z M23,19c0,0.6-0.4,1-1,1h-3c-0.6,0-1-0.4-1-1v-3c0-0.6,0.4-1,1-1h3c0.6,0,1,0.4,1,1V19z"/>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold">Basic Tile Editor</p>
+							<p class="text-sm">Ferramenta para editar Tiles de ROMs antigas</p>
+						</div>
+					</div>
+				</a>
+				
+				<a href="https://github.com/marcos-tulio/java_snake_game">
+					<div class="m-auto text-center">
+						<div class="max-w-[80px] m-auto py-2">
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"  xml:space="preserve">
+								<g>
+									<path class="st0" d="M395.25,443.374c-2.552-2.5-4.37-5.249-5.636-8.24c-1.886-4.469-2.424-9.521-1.552-14.315
+										c0.886-4.795,3.029-9.21,6.748-13.035l47.694-48.899c8.953-9.164,15.724-19.852,20.148-31.19c6.65-17.011,8.12-35.424,4.484-53.041
+										c-3.613-17.595-12.482-34.523-26.267-47.944c-9.164-8.953-19.86-15.724-31.19-20.147c-17.011-6.65-35.424-8.12-53.034-4.491
+										c-17.602,3.62-34.53,12.489-47.959,26.274l-77.816,79.77c-2.499,2.552-5.256,4.378-8.248,5.636c-4.46,1.886-9.52,2.424-14.307,1.56
+										c-4.802-0.894-9.21-3.037-13.034-6.755c-2.552-2.492-4.37-5.242-5.635-8.241c-1.886-4.469-2.424-9.513-1.553-14.3
+										c0.886-4.802,3.029-9.218,6.74-13.042l20.087-20.586c8.952-9.165,15.723-19.86,20.146-31.19c6.651-17.012,8.12-35.424,4.484-53.034
+										c-3.469-16.906-11.831-33.137-24.677-46.293l-10.679-35.462c-6.044-20.117-22.17-35.614-42.506-40.87l-40.34-10.437
+										c-7.513-1.939-15.496,0.288-20.919,5.832L85.613,56.125c-5.423,5.552-7.446,13.588-5.316,21.048l11.429,40.074
+										c5.764,20.208,21.654,35.932,41.923,41.491l33.174,9.089c0,0,3.136,6.514,4.393,9.506c1.886,4.477,2.424,9.52,1.56,14.307
+										c-0.894,4.803-3.037,9.218-6.756,13.043L145.94,225.27c-8.945,9.172-15.716,19.859-20.146,31.19
+										c-6.643,17.011-8.112,35.424-4.477,53.041c3.606,17.595,12.482,34.531,26.26,47.952c9.164,8.953,19.859,15.724,31.19,20.148
+										c17.012,6.65,35.424,8.112,53.042,4.484c17.602-3.62,34.523-12.482,47.951-26.267l77.824-79.778c2.5-2.545,5.249-4.37,8.24-5.628
+										c4.469-1.886,9.521-2.432,14.3-1.56c4.802,0.894,9.225,3.037,13.042,6.748c2.56,2.5,4.378,5.249,5.635,8.24
+										c1.893,4.469,2.431,9.521,1.56,14.308c-0.886,4.802-3.037,9.21-6.748,13.042l-47.702,48.891
+										c-8.953,9.164-15.716,19.867-20.147,31.198c-6.643,17.004-8.112,35.416-4.476,53.034c3.606,17.602,12.482,34.522,26.26,47.952
+										c41.18,40.165,117.088,11.262,123.087-18.05C449.041,475.753,415.238,466.641,395.25,443.374z"/>
+									<path class="st0" d="M92.786,42.461c0,0-32.19-30.403-31.713-42.461c-7.165,7.166,0.576,20.284,0.576,20.284
+										s-13.118-7.741-20.284-0.576c12.066-0.478,42.468,31.706,42.468,31.706L92.786,42.461z"/>
+								</g>
+							</svg>
+						</div>
+						<div>
+							<p class="font-bold">Snake Game</p>
+							<p class="text-sm">Jogo da cobrinha codificado em JAVA. Um dos meus primeiros projetos >.<</p>
+						</div>
+					</div>
+				</a>
+			</div>
+
+			<footer class="mb-0 mt-auto text-center p-4 text-sm">Desenvolvido por <a href="https://github.com/marcos-tulio"><span class="text-teal-600 font-bold">Marcos Santos</span></a></footer>
+		</div>
+  	</body>
+</hmtl>
