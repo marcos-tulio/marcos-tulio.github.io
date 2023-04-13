@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset='utf-8'>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>Projetos por Marcos Santos</title>
+		<meta name='viewport' content='width=device-width, initial-scale=1'>
+		<script src="https://cdn.tailwindcss.com/3.2.4"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
+		<style>
+            .content{
+                display: flex;
+                flex-direction: column;
+
+                background-color: whitesmoke;
+                color: #4a5568;
+
+                padding: 1rem;
+                border-radius: .25rem;
+                max-width: 500px;
+                width: 100%;
+                margin: auto;
+            }
+            
+			.content input{
+                padding: .25rem 0;
+                border-radius: .25rem;
+                width: 100%;
+                padding-left: .5rem;
+			}
+
+			.content input:focus{
+                outline-color: #0d9488;
+			}
+
+            .content label{
+                width: 200px;
+                font-weight: bold;
+            }
+
+            .content button{
+                background-color: #0d9488;
+                color: white;
+                padding: .5rem 3rem;
+                border-radius: .25rem;
+            }
+		</style>
+	</head>
+	<body>
+		<div class="flex flex-col bg-neutral-800 text-white min-h-screen h-fit">
+			<!-- Title -->
+			<div class="bg-teal-600 flex min-h-[250px] mb-5">
+				<div class="flex flex-col m-auto text-center">
+					<div class="text-5xl my-4 font-bold w-fit mx-auto"><h1 class="bg-neutral-800 p-3">Calculadora de Juros</h1></div>
+					<span>Calculadora de Juros Compostos.</span>
+				</div>
+			</div>
+
+			<!-- Content -->
+			<form class="content gap-4 h-full">
+				<div>
+                    <label>Montante</label>
+                    <input id="amount"/>
+                </div>
+				<div>
+                    <label>Capital</label>
+                    <input id="capital"/>
+                </div>
+				<div>
+                    <label>Juros</label>
+                    <input id="fees"/>
+                </div>
+				<div>
+                    <label>Taxa</label>
+                    <input id="tax"/>
+                </div>
+                <div>
+                    <label>Período</label>
+                    <input id="period"/>
+                </div>
+                <div class="flex">
+                    <div class="m-auto">
+                        <button id="clear" >Limpar</button>
+                        <button id="calculate" >Calcular</button>
+                    </div>
+                </div>
+			</form>
+
+			<footer class="mb-0 mt-auto text-center p-4 text-sm">Desenvolvido por <a href="https://github.com/marcos-tulio"><span class="text-teal-600 font-bold">Marcos Santos</span></a></footer>
+		</div>
+
+        <script>
+            const formatter = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'});
+
+            $("#calculate").click(function(e){
+                e.preventDefault()
+
+                let amount  = parseFloat( $("#amount").val() )
+                let capital = parseFloat( $("#capital").val() )
+                let fees    = parseFloat( $("#fees").val() )
+                let tax     = parseFloat( $("#tax").val() )
+                let period  = parseFloat( $("#period").val() )
+
+                if (!fees){
+                    // J = C . (1 + i )^ t
+                    fees = capital * Math.pow( (1 + tax/100), period)
+                }
+
+                // M = C + J
+                amount = capital + fees
+
+                console.log( formatter.format(amount) )
+
+                $("#amount").val(formatter.format(amount || 0))
+                $("#capital").val(formatter.format(capital || 0))
+                $("#fees").val(formatter.format(fees || 0))
+                $("#tax").val(tax || 0)
+                $("#period").val(period || 0)
+            })
+        
+            $("#clear").click(function(e){
+                e.preventDefault()
+
+                $("#amount").val("")
+                $("#capital").val("")
+                $("#fees").val("")
+                $("#tax").val("")
+                $("#period").val("")
+            })
+        </script>
+  	</body>
+</hmtl>
