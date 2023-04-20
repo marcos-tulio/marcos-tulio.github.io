@@ -7,6 +7,7 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1'>
 		<script src="https://cdn.tailwindcss.com/3.2.4"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
+        <script src="js/jquery.maskMoney.min.js"></script>
 		<style>
             .content{
                 display: flex;
@@ -15,11 +16,17 @@
                 background-color: whitesmoke;
                 color: #4a5568;
 
-                padding: 1rem;
                 border-radius: .25rem;
                 max-width: 500px;
                 width: 100%;
                 margin: auto;
+            }
+
+            .content form{
+                display: flex;
+                flex-direction: column;
+                gap: .25rem;
+                padding: 1rem;
             }
             
 			.content input{
@@ -29,13 +36,15 @@
                 padding-left: .5rem;
 			}
 
-			.content input:focus{
+			.content input:focus,
+            .content select:focus{
                 outline-color: #0d9488;
 			}
 
             .content label{
                 width: 200px;
                 font-weight: bold;
+                padding-top: 1rem !important;
             }
 
             .content button{
@@ -44,88 +53,358 @@
                 padding: .5rem 3rem;
                 border-radius: .25rem;
             }
+
+            .content .header{
+               display: flex;
+            }
+
+            .content .header button{
+               width: 100%;
+               border-radius: 0;
+               height: 3.5rem;
+               font-weight: bold;
+            }
+
+            .content :not(.header) button:hover{
+                background-color: #0f746b;
+            }
+
+            .content .header button:first-child{
+                border-radius: .25rem 0 0 0;
+            }
+
+            .content .header button:last-child{
+                border-radius: 0 .25rem 0 0;
+            }
+
+            .content .selected{
+                background-color: rgb(245,245,245);
+                color: #0d9488;
+            }
+
+            .selector{
+                display: flex;
+                gap: .25rem;
+            }
+
+            .selector > *{
+                width: 100% !important;
+            }
+
+            select{
+                border-radius: .25rem;
+            }
+
+            /* Tooltip container */
+            .tooltip {
+                position: relative;
+                display: inline-block;
+            }
+
+            /* Tooltip text */
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 180px;
+                background-color: #555;
+                color: #fff;
+                text-align: center;                
+                font-size: small;
+                padding: 5px 0;
+                border-radius: 6px;
+
+                /* Position the tooltip text */
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -80px;
+
+                /* Fade in tooltip */
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            /* Tooltip arrow */
+            .tooltip .tooltiptext::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent;
+            }
+
+            /* Show the tooltip text when you mouse over the tooltip container */
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 1;
+            }
 		</style>
 	</head>
 	<body>
 		<div class="flex flex-col bg-neutral-800 text-white min-h-screen h-fit">
 			<!-- Title -->
-			<div class="bg-teal-600 flex min-h-[250px] mb-5">
+			<div class="bg-teal-600 flex min-h-[200px] mb-5">
 				<div class="flex flex-col m-auto text-center">
 					<div class="text-5xl my-4 font-bold w-fit mx-auto"><h1 class="bg-neutral-800 p-3">Calculadora de Juros</h1></div>
-					<span>Calculadora de Juros Compostos.</span>
+					<!-- <span>Calculadora de Juros .</span> -->
 				</div>
 			</div>
 
 			<!-- Content -->
-			<form class="content gap-4 h-full">
-				<div>
-                    <label>Montante</label>
-                    <input id="amount"/>
+            <div class="content">
+                <div class="header">
+                    <button id="basic" class="selected">Juros Simples</button>
+                    <button id="advanced">Juros Compostos</button>
                 </div>
-				<div>
-                    <label>Capital</label>
-                    <input id="capital"/>
-                </div>
-				<div>
-                    <label>Juros</label>
-                    <input id="fees"/>
-                </div>
-				<div>
-                    <label>Taxa</label>
-                    <input id="tax"/>
-                </div>
-                <div>
-                    <label>Período</label>
-                    <input id="period"/>
-                </div>
-                <div class="flex">
-                    <div class="m-auto">
-                        <button id="clear" >Limpar</button>
-                        <button id="calculate" >Calcular</button>
+
+                <form>
+                    <div>
+                        <label>Montante</label>
+                        <input id="amount"/>
                     </div>
-                </div>
-			</form>
+
+                    <div>
+                        <label>Capital</label>
+                        <input id="capital"/>
+                    </div>
+
+                    <div>
+                        <label>Juros</label>
+                        <input id="fees"/>
+                    </div>
+
+                    <div>
+                        <div class="tooltip">
+                            <label>Taxa</label>
+                            <span class="tooltiptext" id="tax-tooltip">Aqui será exibida a taxa convertida</span>
+                        </div>
+                        
+                        <div class="selector">                            
+                            <input id="tax" data-thousands="." data-decimal="," data-suffix="%"/>                        
+
+                            <select name="taxs" id="taxs">
+                                <option value="1"   value="day">ao dia (a.d.)</option>
+                                <option value="30"  value="month">ao mês (a.m.)</option>
+                                <option value="60"  value="two-months">ao bimestre (a.b.)</option>
+                                <option value="90"  value="quarter">ao trimestre (a.t.)</option>
+                                <option value="180" value="semester">ao semestre (a.s.)</option>
+                                <option value="360" value="year">ao ano (a.a.)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="tooltip">
+                            <label>Período</label>
+                            <span class="tooltiptext" id="period-tooltip">Aqui será exibido o período convertido</span>
+                        </div>
+
+                        <div class="selector">
+                            <input id="period"/>                     
+
+                            <select name="periods" id="periods">
+                                <option value="1"   value="day">dia</option>
+                                <option value="30"  value="month">mês</option>
+                                <option value="60"  value="two-months">bimestre</option>
+                                <option value="90"  value="quarter">trimestre</option>
+                                <option value="180" value="semester">semestre</option>
+                                <option value="360" value="year">ano</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex mt-4">
+                        <div class="m-auto">
+                            <button id="clear" >Limpar</button>
+                            <button id="calculate" >Calcular</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
 			<footer class="mb-0 mt-auto text-center p-4 text-sm">Desenvolvido por <a href="https://github.com/marcos-tulio"><span class="text-teal-600 font-bold">Marcos Santos</span></a></footer>
 		</div>
 
         <script>
-            const formatter = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'});
+            $(function() {
+                const mask = { prefix:'R$ ', allowNegative: true, thousands:'.', decimal:',', affixesStay: false }
+                $('#amount' ).maskMoney(mask);
+                $('#capital').maskMoney(mask);
+                $('#fees'   ).maskMoney(mask);
+                $('#tax'    ).maskMoney({thousands:'', decimal: ',', suffix: '%', affixesStay: false});
+                $('#period' ).maskMoney({thousands:'', decimal: ','});
 
-            $("#calculate").click(function(e){
-                e.preventDefault()
+                let level = "basic";
 
-                let amount  = parseFloat( $("#amount").val() )
-                let capital = parseFloat( $("#capital").val() )
-                let fees    = parseFloat( $("#fees").val() )
-                let tax     = parseFloat( $("#tax").val() )
-                let period  = parseFloat( $("#period").val() )
+                function changeLevel(e){
+                    e.preventDefault();
+                    level = e.target.id;
 
-                if (!fees){
-                    // J = C . (1 + i )^ t
-                    fees = capital * Math.pow( (1 + tax/100), period)
+                    $("#basic").removeClass("selected");
+                    $("#advanced").removeClass("selected");
+
+                    $(e.target).addClass("selected");
                 }
 
-                // M = C + J
-                amount = capital + fees
+                function truncateDecimals(num, digits) {
+                    let numS = num.toString(),
+                        decPos = numS.indexOf('.'),
+                        substrLength = decPos == -1 ? numS.length : 1 + decPos + digits,
+                        trimmedResult = numS.substr(0, substrLength),
+                        finalResult = isNaN(trimmedResult) ? 0 : trimmedResult;
 
-                console.log( formatter.format(amount) )
+                    return (parseFloat(finalResult) + "").replace('.', ',');
+                }
 
-                $("#amount").val(formatter.format(amount || 0))
-                $("#capital").val(formatter.format(capital || 0))
-                $("#fees").val(formatter.format(fees || 0))
-                $("#tax").val(tax || 0)
-                $("#period").val(period || 0)
-            })
-        
-            $("#clear").click(function(e){
-                e.preventDefault()
+                function convertTax(isBasic, tax, days){
+                    if ( isBasic ) return tax * days
 
-                $("#amount").val("")
-                $("#capital").val("")
-                $("#fees").val("")
-                $("#tax").val("")
-                $("#period").val("")
+                    return (Math.pow( (1 + tax/100), (days) ) - 1) * 100;
+                }
+
+                function calculateTaxs(tax, tax_selected, period, period_selected){
+                    return (level === "basic") 
+                            ? [ tax / tax_selected, period * period_selected ] // Juros Simples
+                            : [ (Math.pow( (1 + tax/100), (1/tax_selected) ) - 1) * 100, period * period_selected]; // Juros compostos
+                }
+
+                function mathLog(x, y) {
+                    return Math.log(y) / Math.log(x);
+                }
+
+                $("#calculate").click(function(e){
+                    e.preventDefault();
+
+                    let amount  = parseFloat( $("#amount" ).maskMoney('unmasked')[0] );
+                    let capital = parseFloat( $("#capital").maskMoney('unmasked')[0] );
+                    let fees    = parseFloat( $("#fees"   ).maskMoney('unmasked')[0] );
+                    let tax     = parseFloat( $("#tax"    ).maskMoney('unmasked')[0] );
+                    let period  = parseFloat( $("#period" ).maskMoney('unmasked')[0] );
+
+                    let days_from_tax_selected    = $("#taxs").find(":selected").val();
+                    let days_from_period_selected = $("#periods").find(":selected").val();
+
+                    // Adaptar taxa e período em dias
+                    let tax_formatted = tax;
+                    let period_formatter = period; 
+                    [tax_formatted, period_formatter] = calculateTaxs(tax, days_from_tax_selected, period, days_from_period_selected);
+
+                    // Encontrar os Juros
+                    if ( !fees ){
+                        // Calcular com base no capital e o montante
+                        if ( capital && amount )
+                            fees = amount - capital; 
+
+                        // Calcular com base no capital
+                        else if ( capital )
+                            fees = (level === "basic") 
+                                ? capital * (tax_formatted/100) * period_formatter      // J = C . i . t
+                                : capital * (Math.pow( (1 + tax_formatted/100), period_formatter) - 1); // J = C . (1 + i )^ t - C
+                        
+                        // Calcular com base no montante
+                        else {
+                            // To do... 
+                        }
+                    }
+
+                    // Encontrar a Taxa
+                    if ( !tax ){
+                        if ( !capital && (amount && fees) )
+                            capital = amount - fees;
+
+                        tax = (level === "basic") 
+                            ? (fees / (capital * period)) * 100 // i = J / (C.t)
+                            : (Math.pow( (fees + capital)/capital, (1/period) ) - 1) * 100; // i = (J/C)^(1/t)-1
+
+                        days_from_tax_selected = days_from_period_selected;
+                        [tax_formatted, period_formatter] = calculateTaxs(tax, days_from_tax_selected, period, days_from_period_selected);
+                    }
+
+                    // Calcular o período
+                    if ( !period ){
+                        period = (level === "basic") 
+                            ? (fees / (capital * (tax/100))) // t = J / (C.i)
+                            : mathLog( (1 + (tax/100)), ((fees + capital) / capital) ) ; // log_(1+i) ((J+C)/C) 
+
+                        days_from_period_selected = days_from_tax_selected;
+                        [tax_formatted, period_formatter] = calculateTaxs(tax, days_from_tax_selected, period, days_from_period_selected);
+                    }
+
+                    // Encontrar o capital
+                    if ( !capital ){
+                        // Calcular com base no montante
+                        if ( amount ){
+                            capital = (level === "basic") 
+                                ? (amount / (1 + (tax_formatted/100) * period_formatter))  // C = M / (1 + i . t)
+                                : (amount / (1 + Math.pow(1 + (tax_formatted/100), period_formatter)) ); // C = M / (1 + (1 + i)^t)
+                                
+                            fees = amount - capital;
+                        }
+
+                        // Calcular com base nos juros
+                        else if ( fees && tax && period ){
+                            capital = (level === "basic") 
+                                ? (fees / ((tax_formatted/100) * period_formatter) ) // C = J/i.t.
+                                : (fees / Math.pow( (1 + (tax_formatted/100)), period_formatter) ); // C = J/(1 + i)^t
+
+                            amount = fees + capital;
+                        }
+                    }
+
+                    // Calcular o Montante
+                    if ( !amount && (capital && fees) ){
+                        amount = capital + fees; // M = C + J
+                    }
+
+                    /* Calcular período e taxa equivalentes */
+                    $("#period-tooltip").html(
+                        truncateDecimals( period_formatter      , 2 ) + " dias"       + "<br>" + 
+                        truncateDecimals( period_formatter / 30 , 2 ) + " meses"      + "<br>" + 
+                        truncateDecimals( period_formatter / 60 , 2 ) + " bimestres"  + "<br>" + 
+                        truncateDecimals( period_formatter / 90 , 2 ) + " trimestres" + "<br>" + 
+                        truncateDecimals( period_formatter / 180, 2 ) + " semestres"  + "<br>" +
+                        truncateDecimals( period_formatter / 360, 2 ) + " anos"       + "<br>"
+                    );
+                    $("#tax-tooltip").html(
+                        truncateDecimals( convertTax( level == "basic", tax_formatted, 1  ), 2 ) + "% a.d." + "<br>" + 
+                        truncateDecimals( convertTax( level == "basic", tax_formatted, 30 ), 2 ) + "% a.m." + "<br>" + 
+                        truncateDecimals( convertTax( level == "basic", tax_formatted, 60 ), 2 ) + "% a.b." + "<br>" + 
+                        truncateDecimals( convertTax( level == "basic", tax_formatted, 90 ), 2 ) + "% a.t." + "<br>" + 
+                        truncateDecimals( convertTax( level == "basic", tax_formatted, 180), 2 ) + "% a.s." + "<br>" +
+                        truncateDecimals( convertTax( level == "basic", tax_formatted, 360), 2 ) + "% a.a." + "<br>"
+                    );
+
+
+                    // Aplicar as máscaras
+                    $("#amount" ).maskMoney('mask', amount );
+                    $("#capital").maskMoney('mask', capital);
+                    $("#fees"   ).maskMoney('mask', fees   );
+                    $("#tax"    ).maskMoney('mask', tax * 100 );
+                    $("#period" ).maskMoney('mask', period );
+
+                    $("#taxs").val(days_from_tax_selected).change();
+                    $("#periods").val(days_from_period_selected).change();
+                })
+            
+                $("#clear").click(function(e){
+                    e.preventDefault();
+
+                    $("#amount").val("");
+                    $("#capital").val("");
+                    $("#fees").val("");
+                    $("#tax").val("");
+                    $("#period").val("");
+
+                    $("#period-tooltip").html("Aqui será exibido o período convertido");
+                    $("#tax-tooltip").html("Aqui será exibida a taxa convertida");
+                })
+            
+                $("#basic").click(changeLevel);
+
+                $("#advanced").click(changeLevel);
             })
         </script>
   	</body>
