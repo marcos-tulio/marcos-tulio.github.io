@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Vetores</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='index.css'>
+    <script src='vetores.js'></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container-dados">
+            <div class="titulo">Dados</div>
+
+            <div class="geracao">
+                <div class="item">
+                    <label>Vetores:</label>
+                    <input id="inp-vetores" type="number" value="10"/>
+                </div>
+                <div class="item">
+                    <label>Posições:</label>
+                    <input id="inp-posicoes" type="number" value="25"/>
+                </div> 
+                <div class="item">
+                    <button onclick="gerarDados()">Gerar</button>
+                </div> 
+            </div>
+
+            <div class="container-tabela">
+                <table class="tbl-vetores">
+                    <thead>
+                        <th>Vetor</th>
+                        <th>Somatório</th>
+                        <th>Valores</th>
+                    </thead>
+                    <tbody id="corpo-tabela">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container-comparacao">
+            <div class="titulo">Comparação</div>
+
+            <div class="comparacao">
+                <div class="item">
+                    <label>Vetor base:</label>
+                    <select id="sel-vetores" onchange="gerarComparacao()">                    
+                    </select>
+                </div>
+
+                <div class="item">
+                    <label>Limite p/ infecção:</label>
+                    <input id="inp-limite" type="number" value="3"/>
+                </div>
+                <div class="item">
+                    <button onclick="gerarComparacao()">Comparar</button>
+                </div> 
+            </div> 
+
+            <ul id="lista-comparacao">
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let vetores = []
+        let vetor_base = 0
+
+        function gerarDados(){
+            let qtd_agentes  = document.getElementById("inp-vetores").value
+            let qtd_posicoes = document.getElementById("inp-posicoes").value
+
+            vetores = gerarVetores(qtd_agentes, qtd_posicoes)
+
+            renderizarDados()
+            
+            gerarComparacao()
+        }
+
+        function renderizarDados(){
+            let corpo_tabela = document.getElementById('corpo-tabela')
+            let tr, td_index, td_valores, td_somatorio
+
+            corpo_tabela.innerHTML = ''
+
+            for (let i = 0; i < vetores.length; i++) {
+
+                td_index = document.createElement("td")
+                td_valores = document.createElement("td")
+                td_somatorio = document.createElement("td")
+                
+                td_index.textContent     = i
+                td_valores.textContent   = vetores[i].array
+                td_somatorio.textContent = vetores[i].somatorio
+
+                tr = document.createElement("tr")
+                tr.append( td_index )
+                tr.append( td_somatorio )
+                tr.append( td_valores )
+                corpo_tabela.append( tr )
+            }
+        }
+
+        function gerarComparacao(){
+            let opcoes = document.getElementById('sel-vetores')
+            let option, selected
+
+            if (opcoes.value){
+                vetor_base = opcoes.options.selectedIndex
+                selected = opcoes.value
+            }
+
+            opcoes.innerHTML = ''
+
+            for (let i = 0; i < vetores.length; i++) {
+                option = document.createElement("option")
+                option.textContent = "Vetor " + i
+                option.value = i
+
+                opcoes.append( option ) 
+            }
+
+            if (selected) opcoes.value = selected
+
+            renderizarComparacao()
+        }
+
+        function renderizarComparacao( ){
+            let lista  = document.getElementById('lista-comparacao')
+            let limite = document.getElementById("inp-limite").value
+            let li, comparacao
+
+            lista.innerHTML = ''
+
+            for (let i = 0; i < vetores.length; i++) {
+                if (vetor_base == i) continue
+                li = document.createElement("li")
+
+                comparacao = Math.abs( vetores[vetor_base].somatorio - vetores[i].somatorio )
+
+                if ( comparacao > limite ){
+                    li.textContent = "Comparação com VETOR " + i + " = " + comparacao
+                    lista.append( li )
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+body{
+    background-color: #F1F1F1;
+}
+
+.container{
+    display: flex;
+    /*flex-direction: column;*/
+    gap: 10px;
+}
+
+.container-tabela,
+.container-dados,
+.container-comparacao{
+    /*margin: auto;*/    
+    background-color: white;
+}
+
+.container-dados{
+    margin-left: auto;
+}
+
+.container-comparacao{
+    margin-right: auto;
+}
+
+#lista-comparacao{
+    margin: 0;
+    padding-top: 10px;
+}
+
+.container .comandos{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: .5rem;
+}
+
+.container-dados,
+.container-comparacao{
+    border: solid 1px #e1e1e1;
+    border-radius: 5px;
+    padding: .5rem;
+    min-width: 300px;
+}
+
+table{
+    margin: 5px 0;
+    border-spacing: 0;
+    border: solid 1px gray;
+}
+
+th, 
+td {
+    border: solid 1px gray;
+    text-align: center;
+}
+
+th{
+    padding: 3px;
+}
+
+td{
+    padding: 3px 2px;
+}
+
+.titulo{
+    text-align: center;
+    font-weight: bold;
+    font-size: large;
+    padding: .5rem;
+    padding-top: 0;
+}
+
+.item{
+    padding: .125rem 0;
+}
+
+.center{
+    margin: auto;
+}
