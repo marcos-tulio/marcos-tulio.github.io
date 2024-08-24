@@ -43,7 +43,7 @@
         </div>
 
         <div class="container-comparacao">
-            <div class="titulo">Comparação</div>
+            <div class="titulo">Lista de Infecções</div>
 
             <div class="comparacao">
                 <div class="item">
@@ -98,6 +98,7 @@
                 td_somatorio.textContent = vetores[i].somatorio
 
                 tr = document.createElement("tr")
+                tr.dataset.index = i
                 tr.append( td_index )
                 tr.append( td_somatorio )
                 tr.append( td_valores )
@@ -130,6 +131,7 @@
         }
 
         function renderizarComparacao( ){
+            let corpo_tabela = document.getElementById('corpo-tabela')
             let lista  = document.getElementById('lista-comparacao')
             let limite = document.getElementById("inp-limite").value
             let li, comparacao
@@ -137,14 +139,25 @@
             lista.innerHTML = ''
 
             for (let i = 0; i < vetores.length; i++) {
-                if (vetor_base == i) continue
-                li = document.createElement("li")
+                if (vetor_base == i){ 
+                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-infectado')
+                    corpo_tabela.getElementsByTagName('tr')[i].classList.add('item-ref')
+                    continue
+                }
 
                 comparacao = Math.abs( vetores[vetor_base].somatorio - vetores[i].somatorio )
 
                 if ( comparacao > limite ){
+                    li = document.createElement("li")
                     li.textContent = "Comparação com VETOR " + i + " = " + comparacao
                     lista.append( li )
+
+                    corpo_tabela.getElementsByTagName('tr')[i].classList.add('item-infectado')
+                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-ref')
+
+                } else{
+                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-infectado')
+                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-ref')
                 }
             }
         }

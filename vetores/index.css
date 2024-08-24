@@ -23,6 +23,10 @@ body{
     margin-right: auto;
 }
 
+.container-tabela{
+    overflow: auto;
+}
+
 #lista-comparacao{
     margin: 0;
     padding-top: 10px;
@@ -77,4 +81,12 @@ td{
 
 .center{
     margin: auto;
+}
+
+.item-ref{
+    background-color: #4ade80;
+}
+
+.item-infectado{
+    background-color: #f87171;
 }
