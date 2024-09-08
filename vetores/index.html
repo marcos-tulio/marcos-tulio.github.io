@@ -47,21 +47,37 @@
 
             <div class="comparacao">
                 <div class="item">
-                    <label>Vetor base:</label>
-                    <select id="sel-vetores" onchange="gerarComparacao()">                    
-                    </select>
-                </div>
-
-                <div class="item">
                     <label>Limite p/ infecção:</label>
                     <input id="inp-limite" type="number" value="3"/>
                 </div>
+
                 <div class="item">
-                    <button onclick="gerarComparacao()">Comparar</button>
+                    <span>Tipo de comparação:</span>
+                    
+                    <div>
+                        <input type="radio" id="comp_nn" value="nn" name="radio_comp" checked onchange="renderizarPeloTipo()">
+                        <label for="comp_nn">n x n</label><br>
+
+                        <input type="radio" id="comp_1n" value="1n" name="radio_comp" onchange="renderizarPeloTipo()">
+                        <label for="comp_1n">1 x n</label><br>
+                    </div>
+                </div>
+
+                <!-- Opção apenas para comparação 1 x n -->
+                <div id="opcoes-comparacao" class="item" hidden>
+                    <label>Vetor base:</label>
+                    <select id="sel-vetores" onchange="gerarComparacao()" title="Seleção do vetor base">
+                        <!-- Preenchimento dinâmico -->                  
+                    </select>
+                </div>
+                
+                <div class="item">
+                    <button onclick="renderizarComparacao()" type="button">Comparar</button>
                 </div> 
             </div> 
 
             <ul id="lista-comparacao">
+                <!-- Preenchimento dinâmico -->
             </ul>
         </div>
     </div>
@@ -69,6 +85,21 @@
     <script>
         let vetores = []
         let vetor_base = 0
+        let comp_vetor_base = false
+
+        function renderizarPeloTipo(){
+            let radios = document.getElementsByName('radio_comp')
+
+            comp_vetor_base = false
+
+            radios.forEach(radio => {
+                if ( radio.checked && radio.value == '1n') comp_vetor_base = true
+            });
+
+            document.getElementById('opcoes-comparacao').hidden = !comp_vetor_base
+
+            renderizarComparacao()
+        }
 
         function gerarDados(){
             let qtd_agentes  = document.getElementById("inp-vetores").value
@@ -130,7 +161,14 @@
             renderizarComparacao()
         }
 
-        function renderizarComparacao( ){
+        function renderizarComparacao(){
+            if (comp_vetor_base) 
+                renderizarComparacao1xN()
+            else 
+                renderizarComparacaoNxN()
+        }
+
+        function renderizarComparacao1xN(){
             let corpo_tabela = document.getElementById('corpo-tabela')
             let lista  = document.getElementById('lista-comparacao')
             let limite = document.getElementById("inp-limite").value
@@ -149,7 +187,7 @@
 
                 if ( comparacao > limite ){
                     li = document.createElement("li")
-                    li.textContent = "Comparação com VETOR " + i + " = " + comparacao
+                    li.textContent = "Comp. Vetor[" + vetor_base + "] e Vetor[" + i + "] = " + comparacao
                     lista.append( li )
 
                     corpo_tabela.getElementsByTagName('tr')[i].classList.add('item-infectado')
@@ -161,6 +199,33 @@
                 }
             }
         }
+
+        function renderizarComparacaoNxN(){
+            let corpo_tabela = document.getElementById('corpo-tabela')
+            let lista  = document.getElementById('lista-comparacao')
+            let limite = document.getElementById("inp-limite").value
+            let li, comparacao
+
+            lista.innerHTML = ''
+
+            for (let i = 0; i < vetores.length; i++) {
+                for (let j = 0; j < vetores.length; j++) {
+                    if (i >= j) continue
+
+                    comparacao = Math.abs( vetores[i].somatorio - vetores[j].somatorio )
+
+                    if ( comparacao > limite ){
+                        li = document.createElement("li")
+                        li.textContent = "Comp. Vetor[" + i + "] e Vetor[" + j + "] = " + comparacao
+                        lista.append( li )
+                    }
+
+                    corpo_tabela.getElementsByTagName('tr')[j].classList.remove('item-infectado')
+                    corpo_tabela.getElementsByTagName('tr')[j].classList.remove('item-ref')
+                }
+            }
+        }
+
     </script>
 </body>
 
