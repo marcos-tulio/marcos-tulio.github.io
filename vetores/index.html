@@ -210,7 +210,7 @@
 
             for (let i = 0; i < vetores.length; i++) {
                 for (let j = 0; j < vetores.length; j++) {
-                    if (i >= j) continue
+                    if (i > j) continue
 
                     comparacao = Math.abs( vetores[i].somatorio - vetores[j].somatorio )
 
