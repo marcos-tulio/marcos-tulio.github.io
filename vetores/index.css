@@ -2,36 +2,86 @@ body{
     background-color: #F1F1F1;
 }
 
-.container{
+.content{
     display: flex;
-    /*flex-direction: column;*/
-    gap: 10px;
+    flex-direction: row;
+    gap: .5rem;
 }
 
-.container-tabela,
-.container-dados,
-.container-comparacao{
-    /*margin: auto;*/    
+.content > :first-child{    
+    margin-left: auto;
+}
+.content > :last-child{    
+    margin-right: auto;
+}
+
+.container{
+    border: solid 1px #e1e1e1;
     background-color: white;
+    border-radius: 5px;
+    padding: .5rem;
+}
+
+/*
+.container-simulacao{
+    margin: auto;
+    display: flex;
+}
+
+.container-simulacao .container{
+    margin-left: 0;
+}
+
+.container-simulacao .geracao-cenarios{
+    display: flex;    
+    gap: .5rem;
+}
+
+.container-simulacao .item{
+    margin: auto;
+    padding: 0;
+}
+*/
+
+.container-geracao-cenarios{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.container-geracao-cenarios .item,
+.container-geracao-cenarios button{
+    width: 100%;
+    padding: 0;
+    margin: 0 !important;
+}
+
+.container-multiplo{
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.container-multiplo .botoes{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.container-comparacao{
+    height: fit-content;
 }
 
 .container-dados{
-    margin-left: auto;
-}
-
-.container-comparacao{
-    margin-right: auto;
+    height: fit-content;
 }
 
 .container-tabela{
     overflow: auto;
+    background-color: white;
 }
 
-#lista-comparacao{
-    margin: 0;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
 
 .container .comandos{
     display: flex;
@@ -40,16 +90,8 @@ body{
     padding: .5rem;
 }
 
-.container-dados,
-.container-comparacao{
-    border: solid 1px #e1e1e1;
-    border-radius: 5px;
-    padding: .5rem;
-    min-width: 300px;
-}
-
 table{
-    margin: 5px 0;
+    margin: 5px auto;
     border-spacing: 0;
     border: solid 1px gray;
 }
@@ -90,4 +132,50 @@ td{
 
 .item-infectado{
     background-color: #f87171;
+}
+
+input[type="number"]{
+    width: 40px;
+    height: 20px;
+}
+
+select{
+    height: 30px;
+}
+
+button{
+    height: 30px;
+    min-width: 70px;
+    padding: 0 .5rem;
+    background-color: #e7e7e7;
+    color: black;
+    border: 1px solid darkgray;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover:not(.cenario-ativo){
+    background-color: #d1d1d1;
+}
+
+.geracao{
+    display: flex;
+    gap: 1rem;
+}
+
+.geracao > *{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.item-botoes{
+    display: flex;
+}
+
+.item-botoes > button{
+    margin: .5rem auto ;
+}
+
+.cenario-ativo{
+    background-color: #4ade80;
 }

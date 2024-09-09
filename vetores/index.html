@@ -11,20 +11,47 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="container-dados">
-            <div class="titulo">Dados</div>
+    <div class="content">
+        <div class="container-multiplo">        
+            <div class="container container-geracao-cenarios">
+                <div class="titulo">Simulação</div>
+                
+                <div class="item">
+                    <label>Qtd. cenários:</label>
+                    <input id="inp-cenarios" type="number" value="5" min="1"/>
+                </div>             
 
-            <div class="geracao">
-                <div class="item">
-                    <label>Vetores:</label>
-                    <input id="inp-vetores" type="number" value="10"/>
-                </div>
-                <div class="item">
-                    <label>Posições:</label>
-                    <input id="inp-posicoes" type="number" value="25"/>
+                <div class="item item-botoes">
+                    <button onclick="gerarCenario()">Criar cenários</button>
                 </div> 
-                <div class="item">
+
+            </div>
+
+            <div class="container">
+                <div class="titulo">Cenários</div>
+
+                <div id="botoes-cenarios" class="botoes">
+                    <!-- gerado dinamicamente -->
+                </div>
+            </div>
+        </div>
+    
+        <div class="container container-dados">
+            <div class="titulo" id="titulo-dados">Dados</div>
+
+            <div class="geracao">                
+                    <div class="item">
+                        <label>Vetores:</label>
+                        <input id="inp-vetores" type="number" value="10" min="1"/>
+                    </div>
+
+                    <div class="item">
+                        <label>Posições:</label>
+                        <input id="inp-posicoes" type="number" value="25" min="1"/>
+                    </div> 
+                
+
+                <div class="item item-botoes">
                     <button onclick="gerarDados()">Gerar</button>
                 </div> 
             </div>
@@ -36,53 +63,78 @@
                         <th>Somatório</th>
                         <th>Valores</th>
                     </thead>
-                    <tbody id="corpo-tabela">
+                    <tbody id="corpo-tabela-vetores">
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="container-comparacao">
-            <div class="titulo">Lista de Infecções</div>
-
-            <div class="comparacao">
-                <div class="item">
-                    <label>Limite p/ infecção:</label>
-                    <input id="inp-limite" type="number" value="3"/>
-                </div>
-
-                <div class="item">
-                    <span>Tipo de comparação:</span>
-                    
-                    <div>
-                        <input type="radio" id="comp_nn" value="nn" name="radio_comp" checked onchange="renderizarPeloTipo()">
-                        <label for="comp_nn">n x n</label><br>
-
-                        <input type="radio" id="comp_1n" value="1n" name="radio_comp" onchange="renderizarPeloTipo()">
-                        <label for="comp_1n">1 x n</label><br>
-                    </div>
-                </div>
-
-                <!-- Opção apenas para comparação 1 x n -->
-                <div id="opcoes-comparacao" class="item" hidden>
-                    <label>Vetor base:</label>
-                    <select id="sel-vetores" onchange="gerarComparacao()" title="Seleção do vetor base">
-                        <!-- Preenchimento dinâmico -->                  
-                    </select>
-                </div>
-                
-                <div class="item">
-                    <button onclick="renderizarComparacao()" type="button">Comparar</button>
+        <div class="container-multiplo">
+            <div class="container container-geracao-cenarios">
+                <div class="item item-botoes">
+                    <button onclick="gerarDados()">Gerar Gráfico</button>
                 </div> 
-            </div> 
 
-            <ul id="lista-comparacao">
-                <!-- Preenchimento dinâmico -->
-            </ul>
+                <div class="item item-botoes">
+                    <button onclick="gerarDados()">Exportar Dados</button>
+                </div> 
+            </div>
+
+            <div class="container container-comparacao">
+                <div class="titulo">Lista de Infecções</div>
+
+                <div class="comparacao">
+                    <div class="item">
+                        <label>Limite p/ infecção:</label>
+                        <input id="inp-limite" type="number" value="3" min="0"/>
+                    </div>
+
+                    <div class="item">
+                        <span>Tipo de comparação:</span>
+                        
+                        <div>
+                            <input type="radio" id="comp_nn" value="nn" name="radio_comp" checked onchange="renderizarPeloTipo()">
+                            <label for="comp_nn">n x n</label><br>
+
+                            <input type="radio" id="comp_1n" value="1n" name="radio_comp" onchange="renderizarPeloTipo()">
+                            <label for="comp_1n">1 x n</label><br>
+                        </div>
+                    </div>
+
+                    <!-- Opção apenas para comparação 1 x n -->
+                    <div id="opcoes-comparacao" class="item" hidden>
+                        <label>Vetor base:</label>
+                        <select id="sel-vetores" onchange="gerarComparacao()" title="Seleção do vetor base">
+                            <!-- Preenchimento dinâmico -->                  
+                        </select>
+                    </div>
+                    
+                    <div class="item item-botoes">
+                        <button onclick="renderizarComparacao()" type="button">Comparar</button>
+                    </div> 
+                </div> 
+
+                <!-- <ul id="lista-comparacao">
+                    Preenchimento dinâmico 
+                </ul>-->
+
+                <div class="container-tabela">
+                    <table class="tbl-comparacao">
+                        <thead>
+                            <th>Vetor A</th>
+                            <th>Vetor B</th>
+                            <th>Infecções</th>
+                        </thead>
+                        <tbody id="corpo-tabela-comparacao">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        let cenario = 0
         let vetores = []
         let vetor_base = 0
         let comp_vetor_base = false
@@ -105,28 +157,30 @@
             let qtd_agentes  = document.getElementById("inp-vetores").value
             let qtd_posicoes = document.getElementById("inp-posicoes").value
 
-            vetores = gerarVetores(qtd_agentes, qtd_posicoes)
 
-            renderizarDados()
-            
+            if (!vetores[cenario]) gerarCenario(1)
+
+            vetores[cenario] = gerarVetores(qtd_agentes, qtd_posicoes)
+
+            renderizarDados()            
             gerarComparacao()
         }
 
         function renderizarDados(){
-            let corpo_tabela = document.getElementById('corpo-tabela')
+            let corpo_tabela = document.getElementById('corpo-tabela-vetores')
             let tr, td_index, td_valores, td_somatorio
 
             corpo_tabela.innerHTML = ''
 
-            for (let i = 0; i < vetores.length; i++) {
+            for (let i = 0; i < vetores[cenario].length; i++) {
 
                 td_index = document.createElement("td")
                 td_valores = document.createElement("td")
                 td_somatorio = document.createElement("td")
                 
                 td_index.textContent     = i
-                td_valores.textContent   = vetores[i].array
-                td_somatorio.textContent = vetores[i].somatorio
+                td_valores.textContent   = vetores[cenario][i].array
+                td_somatorio.textContent = vetores[cenario][i].somatorio
 
                 tr = document.createElement("tr")
                 tr.dataset.index = i
@@ -148,7 +202,7 @@
 
             opcoes.innerHTML = ''
 
-            for (let i = 0; i < vetores.length; i++) {
+            for (let i = 0; i < vetores[cenario].length; i++) {
                 option = document.createElement("option")
                 option.textContent = "Vetor " + i
                 option.value = i
@@ -169,63 +223,123 @@
         }
 
         function renderizarComparacao1xN(){
-            let corpo_tabela = document.getElementById('corpo-tabela')
-            let lista  = document.getElementById('lista-comparacao')
+            let corpo_tabela_vetores    = document.getElementById('corpo-tabela-vetores')
+            let corpo_tabela_comparacao = document.getElementById('corpo-tabela-comparacao')
             let limite = document.getElementById("inp-limite").value
-            let li, comparacao
+            let tr, td_vetor_a, td_vetor_b, td_infeccao
+            let comparacao
 
-            lista.innerHTML = ''
+            corpo_tabela_comparacao.innerHTML = ''
 
-            for (let i = 0; i < vetores.length; i++) {
+            for (let i = 0; i < vetores[cenario].length; i++) {
                 if (vetor_base == i){ 
-                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-infectado')
-                    corpo_tabela.getElementsByTagName('tr')[i].classList.add('item-ref')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[i].classList.remove('item-infectado')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[i].classList.add('item-ref')
                     continue
                 }
 
-                comparacao = Math.abs( vetores[vetor_base].somatorio - vetores[i].somatorio )
+                comparacao = Math.abs( vetores[cenario][vetor_base].somatorio - vetores[cenario][i].somatorio )
 
                 if ( comparacao > limite ){
-                    li = document.createElement("li")
-                    li.textContent = "Comp. Vetor[" + vetor_base + "] e Vetor[" + i + "] = " + comparacao
-                    lista.append( li )
+                    td_vetor_a  = document.createElement("td")
+                    td_vetor_b  = document.createElement("td")
+                    td_infeccao = document.createElement("td")
+                    
+                    td_vetor_a.textContent  = vetor_base
+                    td_vetor_b.textContent  = i
+                    td_infeccao.textContent = comparacao
 
-                    corpo_tabela.getElementsByTagName('tr')[i].classList.add('item-infectado')
-                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-ref')
+                    tr = document.createElement("tr")
+                    tr.append( td_vetor_a )
+                    tr.append( td_vetor_b )
+                    tr.append( td_infeccao )
+                    corpo_tabela_comparacao.append( tr )
+
+                    corpo_tabela_vetores.getElementsByTagName('tr')[i].classList.add('item-infectado')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[i].classList.remove('item-ref')
 
                 } else{
-                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-infectado')
-                    corpo_tabela.getElementsByTagName('tr')[i].classList.remove('item-ref')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[i].classList.remove('item-infectado')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[i].classList.remove('item-ref')
                 }
             }
         }
 
         function renderizarComparacaoNxN(){
-            let corpo_tabela = document.getElementById('corpo-tabela')
-            let lista  = document.getElementById('lista-comparacao')
+            let corpo_tabela_vetores    = document.getElementById('corpo-tabela-vetores')
+            let corpo_tabela_comparacao = document.getElementById('corpo-tabela-comparacao')
             let limite = document.getElementById("inp-limite").value
-            let li, comparacao
+            let tr, td_vetor_a, td_vetor_b, td_infeccao
+            let comparacao
 
-            lista.innerHTML = ''
+            corpo_tabela_comparacao.innerHTML = ''
 
-            for (let i = 0; i < vetores.length; i++) {
-                for (let j = 0; j < vetores.length; j++) {
+            for (let i = 0; i < vetores[cenario].length; i++) {
+                for (let j = 0; j < vetores[cenario].length; j++) {
                     if (i > j) continue
 
-                    comparacao = Math.abs( vetores[i].somatorio - vetores[j].somatorio )
+                    comparacao = Math.abs( vetores[cenario][i].somatorio - vetores[cenario][j].somatorio )
 
                     if ( comparacao > limite ){
-                        li = document.createElement("li")
-                        li.textContent = "Comp. Vetor[" + i + "] e Vetor[" + j + "] = " + comparacao
-                        lista.append( li )
+                        td_vetor_a  = document.createElement("td")
+                        td_vetor_b  = document.createElement("td")
+                        td_infeccao = document.createElement("td")
+                        
+                        td_vetor_a.textContent  = i
+                        td_vetor_b.textContent  = j
+                        td_infeccao.textContent = comparacao
+
+                        tr = document.createElement("tr")
+                        tr.append( td_vetor_a )
+                        tr.append( td_vetor_b )
+                        tr.append( td_infeccao )
+                        corpo_tabela_comparacao.append( tr )
                     }
 
-                    corpo_tabela.getElementsByTagName('tr')[j].classList.remove('item-infectado')
-                    corpo_tabela.getElementsByTagName('tr')[j].classList.remove('item-ref')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[j].classList.remove('item-infectado')
+                    corpo_tabela_vetores.getElementsByTagName('tr')[j].classList.remove('item-ref')
                 }
             }
         }
+        
+        function gerarCenario(qtd){
+            let qtd_cenarios = qtd ? qtd : document.getElementById("inp-cenarios").value
+            let botoes_cenarios = document.getElementById('botoes-cenarios')
+            let botao
 
+            for (let i = 0; i < qtd_cenarios; i++) {
+                vetores.push([])
+                cenario = vetores.length - 1
+
+                botao = document.createElement("button")
+                botao.textContent = "Cenário " + ( vetores.length )
+                botao.dataset.index = cenario
+                botao.addEventListener("click", trocarCenario, false)
+                botoes_cenarios.append( botao )
+
+                gerarDados()
+            }
+            
+            renderizarBotoesCenarios()
+
+            document.getElementById("titulo-dados").textContent = "Dados do cenário " + (cenario + 1)
+        }
+
+        function trocarCenario(e){
+            cenario = Number(e.target.dataset.index)
+            renderizarDados()
+            gerarComparacao()
+            renderizarBotoesCenarios()
+
+            document.getElementById("titulo-dados").textContent = "Dados do cenário " + (cenario + 1)
+        }
+
+        function renderizarBotoesCenarios(){
+            for (const botao of document.getElementById("botoes-cenarios").children) {
+                botao.classList.remove('cenario-ativo')
+                if ( cenario == botao.dataset.index ) botao.classList.add('cenario-ativo')
+            }
+        }
     </script>
 </body>
 
