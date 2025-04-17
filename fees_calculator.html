@@ -7,141 +7,8 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1'>
 		<script src="https://cdn.tailwindcss.com/3.2.4"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
-        <script src="js/jquery.maskMoney.min.js"></script>
-		<style>
-            .content{
-                display: flex;
-                flex-direction: column;
-
-                background-color: whitesmoke;
-                color: #4a5568;
-
-                border-radius: .25rem;
-                max-width: 500px;
-                width: 100%;
-                margin: auto;
-            }
-
-            .content form{
-                display: flex;
-                flex-direction: column;
-                gap: .25rem;
-                padding: 1rem;
-            }
-            
-			.content input{
-                padding: .25rem 0;
-                border-radius: .25rem;
-                width: 100%;
-                padding-left: .5rem;
-			}
-
-			.content input:focus,
-            .content select:focus{
-                outline-color: #0d9488;
-			}
-
-            .content label{
-                width: 200px;
-                font-weight: bold;
-                padding-top: 1rem !important;
-            }
-
-            .content button{
-                background-color: #0d9488;
-                color: white;
-                padding: .5rem 3rem;
-                border-radius: .25rem;
-            }
-
-            .content .header{
-               display: flex;
-            }
-
-            .content .header button{
-               width: 100%;
-               border-radius: 0;
-               height: 3.5rem;
-               font-weight: bold;
-            }
-
-            .content :not(.header) button:hover{
-                background-color: #0f746b;
-            }
-
-            .content .header button:first-child{
-                border-radius: .25rem 0 0 0;
-            }
-
-            .content .header button:last-child{
-                border-radius: 0 .25rem 0 0;
-            }
-
-            .content .selected{
-                background-color: rgb(245,245,245);
-                color: #0d9488;
-            }
-
-            .selector{
-                display: flex;
-                gap: .25rem;
-            }
-
-            .selector > *{
-                width: 100% !important;
-            }
-
-            select{
-                border-radius: .25rem;
-            }
-
-            /* Tooltip container */
-            .tooltip {
-                position: relative;
-                display: inline-block;
-            }
-
-            /* Tooltip text */
-            .tooltip .tooltiptext {
-                visibility: hidden;
-                width: 180px;
-                background-color: #555;
-                color: #fff;
-                text-align: center;                
-                font-size: small;
-                padding: 5px 0;
-                border-radius: 6px;
-
-                /* Position the tooltip text */
-                position: absolute;
-                z-index: 1;
-                bottom: 125%;
-                left: 50%;
-                margin-left: -80px;
-
-                /* Fade in tooltip */
-                opacity: 0;
-                transition: opacity 0.3s;
-            }
-
-            /* Tooltip arrow */
-            .tooltip .tooltiptext::after {
-                content: "";
-                position: absolute;
-                top: 100%;
-                left: 50%;
-                margin-left: -5px;
-                border-width: 5px;
-                border-style: solid;
-                border-color: #555 transparent transparent transparent;
-            }
-
-            /* Show the tooltip text when you mouse over the tooltip container */
-            .tooltip:hover .tooltiptext {
-                visibility: visible;
-                opacity: 1;
-            }
-		</style>
+        <script src="js/simple-mask-money.umd.js"></script>
+        <link rel="stylesheet" href="css/fees_calculator.css">
 	</head>
 	<body>
 		<div class="flex flex-col bg-neutral-800 text-white min-h-screen h-fit">
@@ -230,14 +97,131 @@
 
         <script>
             $(function() {
-                const mask = { prefix:'R$ ', allowNegative: true, thousands:'.', decimal:',', affixesStay: false }
-                $('#amount' ).maskMoney(mask);
-                $('#capital').maskMoney(mask);
-                $('#fees'   ).maskMoney(mask);
-                $('#tax'    ).maskMoney({thousands:'', decimal: ',', suffix: '%', affixesStay: false});
-                $('#period' ).maskMoney({thousands:'', decimal: ','});
 
-                let level = "basic";
+                let level   = "basic"
+
+                const mask = {
+                    money  : {
+                        afterFormat(e) { onChangeValidation(e) },
+                        allowNegative: true,
+                        beforeFormat(e) {  },
+                        negativeSignAfter: false,
+                        prefix: 'R$ ',
+                        suffix: '',
+                        fixed: true,
+                        fractionDigits: 2,
+                        decimalSeparator: ',',
+                        thousandsSeparator: '.',
+                        cursor: 'end'
+                    },
+                    tax : { 
+                        thousandsSeparator:'', 
+                        decimalSeparator: ',', 
+                        suffix: '%', 
+                        allowNegative: true
+                    },
+                    period : { 
+                        thousandsSeparator:'', 
+                        decimalSeparator: ',',
+                        allowNegative: true
+                    },
+                    type : {
+                        fees   : {},
+                        amount : {},
+                        capital: {},
+                        tax    : {},
+                        period : {},
+                    }
+                }
+
+                mask.type.fees    = mask.money;
+                mask.type.amount  = mask.money;
+                mask.type.capital = mask.money;
+                mask.type.tax     = mask.tax;
+                mask.type.period  = mask.period;
+
+                function refreshMasks() {
+                    refreshMask( 'amount' );
+                    refreshMask( 'capital');
+                    refreshMask( 'fees'   );
+                    refreshMask( 'tax'    );
+                    refreshMask( 'period' );
+                }
+
+                function refreshMask( id, isUpdated = true ) {
+                    const _mask = {...mask.type[id]}
+
+                    if ( !isUpdated ) {
+                        _mask.beforeFormat = () =>{}
+                        _mask.afterFormat  = () =>{}
+                    }
+
+                    SimpleMaskMoney.removeMask('#' + id)();
+                    SimpleMaskMoney.setMask( '#' + id, _mask );
+                }
+
+                function enableFields(enabled = true) {
+                    $('input, select, #calculate').each(function() {
+                        $(this).prop('disabled', !enabled);
+                    });
+                }
+
+                function onChangeValidation(e){
+                    const input_amount  = $("#amount")
+                    const input_capital = $("#capital")
+                    const input_fees    = $("#fees")
+                    const input_tax     = $("#tax")
+                    const input_period  = $("#period")
+
+                    const amount  = parseFloat( SimpleMaskMoney.formatToNumber(input_amount[0].value))
+                    const capital = parseFloat( SimpleMaskMoney.formatToNumber(input_capital[0].value))
+                    const fees    = parseFloat( SimpleMaskMoney.formatToNumber(input_fees[0].value))
+                    const tax     = parseFloat( SimpleMaskMoney.formatToNumber(input_tax[0].value))
+                    const period  = parseFloat( SimpleMaskMoney.formatToNumber(input_period[0].value))
+
+                    // Auto completar juros
+                    if ( amount && capital && !input_amount[0].disabled && !input_capital[0].disabled){
+                        input_fees[0].disabled   = true
+                        input_fees.val( SimpleMaskMoney.formatToCurrency(amount - capital, mask.type.fees) )
+                        refreshMask('fees', false)
+                        return
+
+                    } else if ( input_fees[0].disabled ) {
+                        input_fees[0].disabled   = false
+                        input_fees.val( 0 )
+                        refreshMask('fees', true)
+                        return
+                    }
+
+                    // Auto completar capital
+                    if ( amount && fees && !input_amount[0].disabled &&!input_fees[0].disabled ){
+                        input_capital[0].disabled = true
+                        input_capital.val( SimpleMaskMoney.formatToCurrency(amount - fees, mask.type.capital) )
+                        refreshMask('capital', false)
+                        return
+
+                    } else if ( input_capital[0].disabled ) {
+                        input_capital[0].disabled = false
+                        input_capital.val( 0 )
+                        refreshMask('capital')
+                        return
+                    }
+
+                    // Auto completar montante
+                    if ( capital && fees && !input_capital[0].disabled && !input_fees[0].disabled ){
+                        input_amount[0].disabled = true
+                        input_amount.val( SimpleMaskMoney.formatToCurrency(capital + fees, mask.type.amount) )
+                        refreshMask('amount', false)
+                        return
+
+                    } else if ( input_amount[0].disabled ) {
+                        input_amount[0].disabled = false
+                        input_amount.val( 0 )
+                        refreshMask('amount')
+                        return
+                    }
+
+                }
 
                 function changeLevel(e){
                     e.preventDefault();
@@ -278,11 +262,11 @@
                 $("#calculate").click(function(e){
                     e.preventDefault();
 
-                    let amount  = parseFloat( $("#amount" ).maskMoney('unmasked')[0] );
-                    let capital = parseFloat( $("#capital").maskMoney('unmasked')[0] );
-                    let fees    = parseFloat( $("#fees"   ).maskMoney('unmasked')[0] );
-                    let tax     = parseFloat( $("#tax"    ).maskMoney('unmasked')[0] );
-                    let period  = parseFloat( $("#period" ).maskMoney('unmasked')[0] );
+                    let amount  = parseFloat( SimpleMaskMoney.formatToNumber($("#amount")[0].value)  );
+                    let capital = parseFloat( SimpleMaskMoney.formatToNumber($("#capital")[0].value) );
+                    let fees    = parseFloat( SimpleMaskMoney.formatToNumber($("#fees")[0].value)    );
+                    let tax     = parseFloat( SimpleMaskMoney.formatToNumber($("#tax")[0].value)     );
+                    let period  = parseFloat( SimpleMaskMoney.formatToNumber($("#period")[0].value)  );
 
                     let days_from_tax_selected    = $("#taxs").find(":selected").val();
                     let days_from_period_selected = $("#periods").find(":selected").val();
@@ -379,32 +363,40 @@
 
 
                     // Aplicar as máscaras
-                    $("#amount" ).maskMoney('mask', amount );
-                    $("#capital").maskMoney('mask', capital);
-                    $("#fees"   ).maskMoney('mask', fees   );
-                    $("#tax"    ).maskMoney('mask', tax * 100 );
-                    $("#period" ).maskMoney('mask', period );
+                    $("#amount" ).val( SimpleMaskMoney.formatToCurrency(amount , mask.type.amount)  );
+                    $("#capital").val( SimpleMaskMoney.formatToCurrency(capital, mask.type.capital) );
+                    $("#fees"   ).val( SimpleMaskMoney.formatToCurrency(fees   , mask.type.fees)    );
+                    $("#tax"    ).val( SimpleMaskMoney.formatToCurrency(tax    , mask.type.tax)     );
+                    $("#period" ).val( SimpleMaskMoney.formatToCurrency(period , mask.type.period)  );
 
                     $("#taxs").val(days_from_tax_selected).change();
                     $("#periods").val(days_from_period_selected).change();
+
+                    refreshMasks()
+                    enableFields(false)
                 })
             
                 $("#clear").click(function(e){
                     e.preventDefault();
 
-                    $("#amount").val("");
-                    $("#capital").val("");
-                    $("#fees").val("");
+                    $("#amount").val(0);
+                    $("#capital").val(0);
+                    $("#fees").val(0);
                     $("#tax").val("");
-                    $("#period").val("");
+                    $("#period").val(0);
 
                     $("#period-tooltip").html("Aqui será exibido o período convertido");
                     $("#tax-tooltip").html("Aqui será exibida a taxa convertida");
+
+                    enableFields(true)
+                    refreshMasks()
                 })
             
                 $("#basic").click(changeLevel);
 
                 $("#advanced").click(changeLevel);
+
+                refreshMasks();
             })
         </script>
   	</body>
