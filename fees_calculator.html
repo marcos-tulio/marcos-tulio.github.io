@@ -98,7 +98,7 @@
         <script>
             $(function() {
 
-                let level   = "basic"
+                let level = "basic"
 
                 const mask = {
                     money  : {
@@ -118,12 +118,15 @@
                         thousandsSeparator:'', 
                         decimalSeparator: ',', 
                         suffix: '%', 
-                        allowNegative: true
+                        allowNegative: true,
+                        fractionDigits: 4,
+                        afterFormat(e) { onChangeValidation(e) },
                     },
                     period : { 
                         thousandsSeparator:'', 
                         decimalSeparator: ',',
-                        allowNegative: true
+                        allowNegative: true,
+                        afterFormat(e) { onChangeValidation(e) },
                     },
                     type : {
                         fees   : {},
@@ -140,33 +143,7 @@
                 mask.type.tax     = mask.tax;
                 mask.type.period  = mask.period;
 
-                function refreshMasks() {
-                    refreshMask( 'amount' );
-                    refreshMask( 'capital');
-                    refreshMask( 'fees'   );
-                    refreshMask( 'tax'    );
-                    refreshMask( 'period' );
-                }
-
-                function refreshMask( id, isUpdated = true ) {
-                    const _mask = {...mask.type[id]}
-
-                    if ( !isUpdated ) {
-                        _mask.beforeFormat = () =>{}
-                        _mask.afterFormat  = () =>{}
-                    }
-
-                    SimpleMaskMoney.removeMask('#' + id)();
-                    SimpleMaskMoney.setMask( '#' + id, _mask );
-                }
-
-                function enableFields(enabled = true) {
-                    $('input, select, #calculate').each(function() {
-                        $(this).prop('disabled', !enabled);
-                    });
-                }
-
-                function onChangeValidation(e){
+                function getValues(){
                     const input_amount  = $("#amount")
                     const input_capital = $("#capital")
                     const input_fees    = $("#fees")
@@ -179,58 +156,171 @@
                     const tax     = parseFloat( SimpleMaskMoney.formatToNumber(input_tax[0].value))
                     const period  = parseFloat( SimpleMaskMoney.formatToNumber(input_period[0].value))
 
-                    // Auto completar juros
-                    if ( amount && capital && !input_amount[0].disabled && !input_capital[0].disabled){
-                        input_fees[0].disabled   = true
-                        input_fees.val( SimpleMaskMoney.formatToCurrency(amount - capital, mask.type.fees) )
-                        refreshMask('fees', false)
-                        return
+                    const days_from_tax_selected    = $("#taxs").find(":selected").val();
+                    const days_from_period_selected = $("#periods").find(":selected").val();
 
-                    } else if ( input_fees[0].disabled ) {
-                        input_fees[0].disabled   = false
-                        input_fees.val( 0 )
-                        refreshMask('fees', true)
-                        return
+                    // Adaptar taxa e período em dias
+                    const tax_formatted    = taxFromDays( tax, days_from_tax_selected )
+                    const period_formatter = periodToDays( period, days_from_period_selected )
+                    //const [tax_formatted, period_formatter] = calculateTaxs(tax, days_from_tax_selected, period, days_from_period_selected)
+
+                    return {
+                        input: {
+                            amount  : input_amount,
+                            capital : input_capital,
+                            fees    : input_fees,
+                            tax     : input_tax,
+                            period  : input_period
+                        },
+                        value: {
+                            amount  : amount,
+                            capital : capital,
+                            fees    : fees,
+                            tax     : tax_formatted,
+                            period  : period_formatter,
+                        }
+                    }
+                }
+
+                function refreshMasks() {
+                    refreshMask( 'amount' )
+                    refreshMask( 'capital')
+                    refreshMask( 'fees'   )
+                    refreshMask( 'tax'    )
+                    refreshMask( 'period' )
+                }
+
+                function refreshMask( id, isUpdated = true ) {
+                    const _mask = {...mask.type[id]}
+
+                    if ( !isUpdated ) {
+                        _mask.beforeFormat = () =>{}
+                        _mask.afterFormat  = () =>{}
                     }
 
-                    // Auto completar capital
-                    if ( amount && fees && !input_amount[0].disabled &&!input_fees[0].disabled ){
-                        input_capital[0].disabled = true
-                        input_capital.val( SimpleMaskMoney.formatToCurrency(amount - fees, mask.type.capital) )
-                        refreshMask('capital', false)
-                        return
+                    SimpleMaskMoney.removeMask('#' + id)()
+                    SimpleMaskMoney.setMask( '#' + id, _mask )
+                    
+                    if ( $('#' + id)[0].blocked ) $('#' + id)[0].disabled = true
+                }
 
-                    } else if ( input_capital[0].disabled ) {
-                        input_capital[0].disabled = false
-                        input_capital.val( 0 )
-                        refreshMask('capital')
-                        return
+                function enableFields(enabled = true) {
+                    $('input, select, #calculate').each(function() {
+                        $(this).prop('disabled', !enabled);
+                    });
+                }
+
+                function onChangeValidation(e){
+
+                    const check = {
+                        fees   : {
+                            filters: [
+                                { 
+                                    conditions: ['amount', 'capital'], 
+                                    blocked   : [/*'tax', 'period'*/], 
+                                    ignore    : [] 
+                                },
+                                { 
+                                    conditions: ['capital', 'tax', 'period'] , 
+                                    blocked   : ['amount'],
+                                    ignore    : []
+                                }
+                            ],
+                            doAction  : calculateFees,
+                        },
+                        capital: {
+                            filters: [
+                                { 
+                                    conditions: ['fees', 'amount'], 
+                                    blocked   : [],
+                                    ignore    : [] 
+                                },
+                            ],
+                            doAction  : calculateCapital,
+                        },                        
+                        amount : {
+                            filters: [
+                                { 
+                                    conditions: ['fees', 'capital'], 
+                                    blocked   : [],
+                                    ignore    : [] 
+                                },
+                            ],
+                            doAction  : calculateAmount,
+                        },
+                        tax    : {
+                            filters: [
+                                { 
+                                    conditions: ['fees', 'capital', 'period'], 
+                                    blocked   : [],
+                                    ignore    : ['fees'] 
+                                },
+                            ],
+                            doAction  : calculateTax,
+                        },
+                        period : {
+                            filters: [
+                                { 
+                                    conditions: ['fees', 'capital', 'tax'], 
+                                    blocked   : [],
+                                    ignore    : [] 
+                                },
+                            ],
+                            doAction  : calculatePeriod,
+                        }
                     }
 
-                    // Auto completar montante
-                    if ( capital && fees && !input_capital[0].disabled && !input_fees[0].disabled ){
-                        input_amount[0].disabled = true
-                        input_amount.val( SimpleMaskMoney.formatToCurrency(capital + fees, mask.type.amount) )
-                        refreshMask('amount', false)
-                        return
+                    const functionCheck = ([key, value]) => {
+                        let needCleaned = true
 
-                    } else if ( input_amount[0].disabled ) {
-                        input_amount[0].disabled = false
-                        input_amount.val( 0 )
-                        refreshMask('amount')
-                        return
+                        value.filters.forEach( filter => {
+
+                            const needCalculate = filter.conditions.every( c => data.value[c] && !data.input[c][0].disabled )
+                            
+                            //console.log( "Tentando... Calculate '" + key + "',  filters: " + filter.conditions.join(", "), data.value )
+                            //console.log( data )
+
+                            if ( needCalculate ) {
+                                filter.blocked.forEach( c => { data.input[c][0].blocked = data.input[c][0].disabled = true } )
+
+                                console.log( "Calculate '" + key + "',  filters: " + filter.conditions.join(", "), data.value )
+
+                                needCleaned = false
+
+                                value.doAction( data = data, disable = true, update = false )    
+                                return
+                            }
+                        })
+
+                        // limpar campo
+                        if ( needCleaned && data.input[key][0].disabled && !data.input[key][0].blocked ) {
+                            data.value[key] = 0
+                            
+                            value.doAction( data = data, disable = false, update = true )
+
+                            value.filters.forEach( f => { f.blocked.forEach( c => { 
+                                data.input[c][0].disabled = data.input[c][0].blocked = false
+                            })} )
+
+                            return
+                        }
                     }
 
+                    let data = getValues()
+
+                    Object.entries(check).forEach( functionCheck )
                 }
 
                 function changeLevel(e){
-                    e.preventDefault();
-                    level = e.target.id;
+                    e.preventDefault()
+                    level = e.target.id
 
-                    $("#basic").removeClass("selected");
-                    $("#advanced").removeClass("selected");
+                    $("#basic").removeClass("selected")
+                    $("#advanced").removeClass("selected")
 
-                    $(e.target).addClass("selected");
+                    $(e.target).addClass("selected")
+
+                    onChangeValidation(e)
                 }
 
                 function truncateDecimals(num, digits) {
@@ -243,7 +333,22 @@
                     return (parseFloat(finalResult) + "").replace('.', ',');
                 }
 
-                function convertTax(isBasic, tax, days){
+                function updateTooltips( periodInDays, tax ){
+                    $("#period-tooltip").html( periodInDays + " dias")
+
+                    if ( tax ){
+                        $("#tax-tooltip").html(
+                            truncateDecimals( taxToDays(tax, 1  ), 5 ) + "% a.d." + "<br>" + 
+                            truncateDecimals( taxToDays(tax, 30 ), 5 ) + "% a.m." + "<br>" + 
+                            truncateDecimals( taxToDays(tax, 60 ), 5 ) + "% a.b." + "<br>" + 
+                            truncateDecimals( taxToDays(tax, 90 ), 5 ) + "% a.t." + "<br>" + 
+                            truncateDecimals( taxToDays(tax, 180), 5 ) + "% a.s." + "<br>" +
+                            truncateDecimals( taxToDays(tax, 360), 5 ) + "% a.a." + "<br>"
+                        ) 
+                    } else $("#tax-tooltip").html("Aqui será exibida a taxa convertida")
+                }
+
+                /*function convertTax(isBasic, tax, days){
                     if ( isBasic ) return tax * days
 
                     return (Math.pow( (1 + tax/100), (days) ) - 1) * 100;
@@ -253,10 +358,141 @@
                     return (level === "basic") 
                             ? [ tax / tax_selected, period * period_selected ] // Juros Simples
                             : [ (Math.pow( (1 + tax/100), (1/tax_selected) ) - 1) * 100, period * period_selected]; // Juros compostos
+                }*/
+
+                function taxFromDays( tax, days ){
+                    return (level === "basic") 
+                            ? tax / days // Juros Simples
+                            : (Math.pow( (1 + tax/100), (1/days) ) - 1) * 100 // Juros compostos
+                }
+
+                function taxToDays( tax, days ){
+                    return ( level === "basic" ) 
+                        ? ( tax * days )
+                        : ( Math.pow( (1 + tax/100), (days) ) - 1) * 100
+                }
+
+                function periodFromDays( period, period_selected ){
+                    return period_selected / period
+                }
+
+                function periodToDays( period, period_selected ){
+                    return period * period_selected
                 }
 
                 function mathLog(x, y) {
                     return Math.log(y) / Math.log(x);
+                }
+
+                function calculateFees( data = data, disable = true, update = false ){
+                    if ( !data ) data = getValues()
+
+                    // Calcular com base no capital e o montante
+                    if ( data.value.capital && data.value.amount )
+                        data.value.fees = data.value.amount - data.value.capital; 
+
+                    // Calcular com base no capital, a taxa e o período
+                    if ( data.value.capital && data.value.tax && data.value.period ){
+                        data.value.fees = (level === "basic") 
+                            ? data.value.capital * (data.value.tax/100) * data.value.period // J = C . i . t
+                            : data.value.capital * (Math.pow( (1 + data.value.tax/100), data.value.period) - 1); // J = C . (1 + i )^ t - C
+                        
+                        calculateAmount( data = data, disable = true, update = false )
+                        //data.input.amount[0].ignored = true
+                    }
+
+                    data.input.fees[0].disabled = disable
+                    data.input.fees.val( SimpleMaskMoney.formatToCurrency(data.value.fees, mask.type.fees) )
+
+                    refreshMask('fees', update)
+                }
+
+                function calculateCapital( data = data, disable = true, update = false ){
+                    if ( !data ) data = getValues()
+
+                    // Calcular com base no montante e os juros
+                    if ( data.value.amount && data.value.fees ){
+                        data.value.capital = data.value.amount - data.value.fees
+                    }
+
+                    // Calcular com base no montante, a taxa e o período
+                    else if ( data.value.amount && data.value.tax && data.value.period ){
+                        data.value.capital = (level === "basic") 
+                            ? (data.value.amount / (1 + (data.value.tax/100) * data.value.period))  // C = M / (1 + i . t)
+                            : (data.value.amount / (1 + Math.pow(1 + (data.value.tax/100), data.value.period)) ); // C = M / (1 + (1 + i)^t)
+                            
+                        //fees = amount - capital
+                        //calculateFees( data = data, disable = true, update = false )
+                    }
+
+                    // Calcular com base nos juros, a taxa e o período
+                    else if ( data.value.fees && data.value.tax && data.value.period ){
+                        data.value.capital = (level === "basic") 
+                            ? (data.value.fees / ((data.value.tax/100) * data.value.period) ) // C = J/i.t.
+                            : (data.value.fees / Math.pow( (1 + (data.value.tax/100)), data.value.period) ); // C = J/(1 + i)^t
+
+                        //amount = fees + capital;
+                        //calculateAmount( data = data, disable = true, update = false )
+                    }
+
+                    data.input.capital[0].disabled = disable
+                    data.input.capital.val( SimpleMaskMoney.formatToCurrency(data.value.capital, mask.type.capital) )
+
+                    refreshMask('capital', update)
+                }
+
+                function calculateAmount( data = data, disable = true, update = false){
+                    if ( !data ) data = getValues()
+
+                    // Calcular com base no capital e os juros
+                    if ( data.value.capital && data.value.fees ){
+                        data.value.amount = data.value.capital + data.value.fees
+                    }
+
+                    data.input.amount[0].disabled = disable
+                    data.input.amount.val( SimpleMaskMoney.formatToCurrency(data.value.amount, mask.type.amount) )
+
+                    refreshMask('amount', update)
+                }
+
+                function calculateTax( data = data, disable = true, update = false ){
+                    if ( !data ) data = getValues()
+
+                    if ( data.value.fees && data.value.capital && data.value.period ){
+
+                        data.value.tax = (level === "basic") 
+                            ? (data.value.fees / (data.value.capital * data.value.period)) * 100 // i = J / (C.t)
+                            : (Math.pow( (data.value.fees + data.value.capital)/data.value.capital, (1/data.value.period) ) - 1) * 100 // i = (J/C)^(1/t)-1       
+
+                        const days_from_tax_selected    = $("#taxs").find(":selected").val()
+                        data.value.tax = taxToDays(data.value.tax, days_from_tax_selected)
+                    }
+
+                    data.input.tax[0].disabled = disable
+                    data.input.tax.val( SimpleMaskMoney.formatToCurrency(data.value.tax, mask.type.tax) )
+
+                    refreshMask('tax', update)
+                    updateTooltips( data.value.period, data.value.tax )
+                }
+
+                function calculatePeriod( data = data, disable = true, update = false ){
+                    if ( !data ) data = getValues()
+
+                    if ( data.value.fees && data.value.capital && data.value.tax ){
+
+                        data.value.period = (level === "basic") 
+                            ? (data.value.fees / (data.value.capital * (data.value.tax/100))) // t = J / (C.i)
+                            : mathLog( (1 + (data.value.tax/100)), ((data.value.fees + data.value.capital) / data.value.capital) )// log_(1+i) ((J+C)/C) 
+
+                        const days_from_period_selected = $("#periods").find(":selected").val()
+                        data.value.period = periodFromDays( data.value.period, days_from_period_selected )
+                    }
+
+                    data.input.period[0].disabled = disable
+                    data.input.period.val( SimpleMaskMoney.formatToCurrency(data.value.period, mask.type.period) )
+
+                    refreshMask('period', update)
+                    updateTooltips( data.value.period, data.value.tax )
                 }
 
                 $("#calculate").click(function(e){
@@ -275,24 +511,6 @@
                     let tax_formatted = tax;
                     let period_formatter = period; 
                     [tax_formatted, period_formatter] = calculateTaxs(tax, days_from_tax_selected, period, days_from_period_selected);
-
-                    // Encontrar os Juros
-                    if ( !fees ){
-                        // Calcular com base no capital e o montante
-                        if ( capital && amount )
-                            fees = amount - capital; 
-
-                        // Calcular com base no capital
-                        else if ( capital )
-                            fees = (level === "basic") 
-                                ? capital * (tax_formatted/100) * period_formatter      // J = C . i . t
-                                : capital * (Math.pow( (1 + tax_formatted/100), period_formatter) - 1); // J = C . (1 + i )^ t - C
-                        
-                        // Calcular com base no montante
-                        else {
-                            // To do... 
-                        }
-                    }
 
                     // Encontrar a Taxa
                     if ( !tax ){
@@ -315,27 +533,6 @@
 
                         days_from_period_selected = days_from_tax_selected;
                         [tax_formatted, period_formatter] = calculateTaxs(tax, days_from_tax_selected, period, days_from_period_selected);
-                    }
-
-                    // Encontrar o capital
-                    if ( !capital ){
-                        // Calcular com base no montante
-                        if ( amount ){
-                            capital = (level === "basic") 
-                                ? (amount / (1 + (tax_formatted/100) * period_formatter))  // C = M / (1 + i . t)
-                                : (amount / (1 + Math.pow(1 + (tax_formatted/100), period_formatter)) ); // C = M / (1 + (1 + i)^t)
-                                
-                            fees = amount - capital;
-                        }
-
-                        // Calcular com base nos juros
-                        else if ( fees && tax && period ){
-                            capital = (level === "basic") 
-                                ? (fees / ((tax_formatted/100) * period_formatter) ) // C = J/i.t.
-                                : (fees / Math.pow( (1 + (tax_formatted/100)), period_formatter) ); // C = J/(1 + i)^t
-
-                            amount = fees + capital;
-                        }
                     }
 
                     // Calcular o Montante
@@ -361,7 +558,6 @@
                         truncateDecimals( convertTax( level == "basic", tax_formatted, 360), 2 ) + "% a.a." + "<br>"
                     );
 
-
                     // Aplicar as máscaras
                     $("#amount" ).val( SimpleMaskMoney.formatToCurrency(amount , mask.type.amount)  );
                     $("#capital").val( SimpleMaskMoney.formatToCurrency(capital, mask.type.capital) );
@@ -385,9 +581,6 @@
                     $("#tax").val("");
                     $("#period").val(0);
 
-                    $("#period-tooltip").html("Aqui será exibido o período convertido");
-                    $("#tax-tooltip").html("Aqui será exibida a taxa convertida");
-
                     enableFields(true)
                     refreshMasks()
                 })
@@ -396,7 +589,10 @@
 
                 $("#advanced").click(changeLevel);
 
-                refreshMasks();
+                $("#taxs").change( onChangeValidation )
+                $("#periods").change( onChangeValidation )
+
+                refreshMasks()
             })
         </script>
   	</body>
