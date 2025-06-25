@@ -1,0 +1,131 @@
+[
+    {
+        "title": "Análise combinatória"
+    },
+    {
+        "title" : "Cálculo",
+        "items" :[
+            {
+                "title" : "Cálculo Diferencial e Integral",
+                "fields": ["Geometria", "Álgebra"],
+                "items" : [
+                    {
+                        "title": "Limites",
+                        "items": [
+                            { "title": "Teorema do confronto" }
+                        ]
+                    },
+                    {
+                        "title": "Derivadas"
+                    },
+                    {
+                        "title": "Integrais",
+                        "items": [
+                            { "title": "Soma de Riemann" }
+                        ]
+                    },
+                    { 
+                        "title": "Funções de várias variáveis"
+                    },
+                    {
+                        "title": "Derivadas parciais",
+                        "items": [
+                            { "title": "Máximos e mínimos locais e globais" },
+                            { "title": "Pontos de sela" }, 
+                            { "title": "Matriz jacobiana" },
+                            { "title": "Matriz hessiana" },
+                            { "title": "Vetor gradiente" }
+                        ]
+                    },
+                    {
+                        "title": "Integrais duplas",
+                        "items": [ 
+                            { "title": "Teorema de Fubini" },
+                            { "title": "Coordenadas polares" }
+                        ]
+                    },
+                    {
+                        "title": "Integrais triplas",
+                        "items": [
+                            { "title": "Coordenadas cilíndricas" },
+                            { "title": "Coordenadas esféricas" }
+                        ]
+                    }
+                    ,
+                    {
+                        "title": "Integrais de linha e de superfície"
+                    }
+                ]
+            },
+            {
+                "title": "Cálculo Númerico",
+                "items": [
+                    { "title": "Teorema de Cauchy-Bolzano" },
+                    { "title": "Método da Bissecção" }
+                ]
+            }
+        ] 
+    },
+
+    {
+        "title": "Equações e inequações",
+        "items": [
+            { 
+                "title": "Equações algébricas",
+                "items": [
+                    { "title": "Equações lineares" },
+                    { "title": "Equações quadráticas" },
+                    { "title": "Equações cúbicas" },
+                    { "title": "Equações biquadráticas" }
+                ]
+            },
+            { "title": "Inequações" },
+            { "title": "Equações transcendentes"},
+            { "title": "Equações diferenciais ordinárias (EDO)" }
+        ]
+    },
+    {
+        "title": "Probabilidades"
+    },
+    {
+        "title": "Estátistica",
+        "items": [
+            {
+                "title": "Regressão linear"
+            },
+            {
+                "title": "Regressão linear múltipla"
+            },
+            {
+                "title": "Regressão logística"
+            },
+            {
+                "title": "Regressão não-linear"
+            }
+        ]
+    },
+    {
+        "title": "Funções"
+    },
+    {
+        "title": "Geometria",
+        "items": [
+            {
+                "title": "Geometria Moderna"
+            },
+            {
+                "title": "Geometria Plana"
+            },
+            {
+                "title": "Geometria Espacial"
+            }
+        ]
+    },
+    {
+        "title": "Topologia"
+    },
+    {
+        "title": "Trigonometria"
+    }
+]
+

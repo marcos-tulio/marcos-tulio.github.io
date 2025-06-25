@@ -1,0 +1,91 @@
+@import "../css/constants.css";
+
+body{
+    /*background-color: var(--primary-bg);
+    color: var(--primary-fg);*/
+    color: white;
+
+    align-items: center;
+    background-image: linear-gradient(rgb(105, 35, 135), rgb(75, 35, 95), rgb(35, 48, 135));
+    background-attachment: fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1024px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+.item {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--secondary-fg);
+    padding: 15px;
+    margin-bottom: 8px;
+
+    align-items: center;
+    background-color: rgba(35, 35, 35, 0.1);
+    border: 1px solid rgba(235, 235, 235, 0.1);
+}
+
+.item-header {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.item-content div{
+    font-size: 1em;
+}
+
+.item-content .subitem{
+    padding-left: 20px;
+}
+
+.item-content .subitem span{
+    padding: 0 5px 0 5px;
+}
+
+*.item > .item-content > .subitem{
+    padding-left: 0px;
+}
+
+.item-content {
+    padding-bottom: 5px;
+}
+
+/*.item-content div :first-child{
+    padding: 0 5px 0 5px;
+}*/
+
+/*.item-content div {
+    transition: all 6s;
+}
+
+.item-content div :last-child:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}*/

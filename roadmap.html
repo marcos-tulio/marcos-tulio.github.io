@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset='utf-8'>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>Projetos por Marcos Santos</title>
+		<meta name='viewport' content='width=device-width, initial-scale=1'>
+		<script src="https://cdn.tailwindcss.com/3.2.4"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <link rel="stylesheet" href="css/roadmap.css">
+	</head>
+    <body>
+        <!--
+
+        <ul>
+            <li>Física I</li>
+            <li>Física II</li>
+            <li>Introdução a física experimental</li>
+            <li>Fundamentos de mecânica</li>
+            <li>Fundamentos de oscilações, ondas e óptica</li>
+            <li>Fundamentos de eletromagnetismo</li>
+            <li>Fundamentos de termodinâmica</li>
+            <li>Fundamentos de física quântica</li>
+            <li>Fundamentos de teoria da relatividade</li>
+            <li>Mecânica I</li>
+            <li>Mecânica II</li>
+            <li>Eletromagnetismo I</li>
+            <li>Física experimental MT</li>
+            <li>Física experimental EO</li>
+        </ul>-->
+
+        <div class="container">
+            <div class="header">
+                <h1 class="text-5xl my-4 font-bold w-fit mx-auto">Matemática</h1>
+            </div>
+
+            <div class="content">
+                <!-- Content will be dynamically added here -->
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+
+                function newItem( items ) {
+                    const content = $('<div class="item-content"></div>');
+
+                    if (items) items.forEach(function(item) {
+                        const div = $('<div class="subitem"></div>');
+                        div.append($('<span>•</span>'));
+                        div.append($('<span></span>').text(item.title));
+
+                        if ( item.items ){
+                            div.removeClass('subitem');
+                            div.addClass('subitem-header');
+
+                            const div_subitem = $('<div class="subitem"></div>');
+                            div_subitem.append(div);
+                            div_subitem.append( newItem(item.items) );
+                            content.append(div_subitem);
+                        }
+
+                        else content.append(div);
+
+                    });
+
+                    return content;
+                }
+
+                function newSection(title, items) {
+                    const section = $('<section class="item"></section>');                    
+                    const header = $('<div class="item-header"></div>').text(title);
+                    
+                    content = newItem(items);
+
+                    section.append(header).append(content);
+                    $('.content').append(section);
+                }
+
+                $.ajax({
+                    url: 'roadmap.json',
+                    dataType: 'json',
+                    success: function(response) {
+                        data = response;
+
+                        data.forEach(function(section) {
+                            newSection(section.title, section.items);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao carregar o JSON:', error);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
