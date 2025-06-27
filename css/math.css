@@ -6,7 +6,7 @@ body{
     color: white;
 
     align-items: center;
-    background-image: linear-gradient(rgb(105, 35, 135), rgb(75, 35, 95), rgb(35, 48, 135));
+    background: linear-gradient(rgb(105, 35, 135), rgb(75, 35, 95), rgb(35, 48, 135));
     background-attachment: fixed;
     background-size: cover;
     display: flex;

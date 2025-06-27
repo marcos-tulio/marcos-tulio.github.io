@@ -1,0 +1,24 @@
+.content a{
+    display: flex;
+    height: 100%;
+    border: solid 1px #3f3f46;
+    padding: 1rem;
+    border-radius: .25rem;
+    min-width: 200px;
+    min-height: 250px;
+
+    transition: all .5s;
+}
+
+.content a:hover{
+    background-color: #0d9488;
+    border-color: #0d9488;
+}
+
+svg{ 
+    fill: white;
+}
+
+a p{
+    margin-top: .25rem;
+}
