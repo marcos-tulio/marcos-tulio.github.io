@@ -60,8 +60,30 @@
             {
                 "title": "Cálculo Númerico",
                 "items": [
-                    { "title": "Teorema de Cauchy-Bolzano" },
-                    { "title": "Método da Bissecção" }
+                    { 
+                        "title": "Zero de Funções"
+                        "items": [
+                             { "title": "Teorema de Cauchy-Bolzano" },
+                             { "title": "Método da Bissecção" },
+                             { "title": "Método da Newton-Raphson" },
+                             { "title": "Método da Secante" }
+                        ]
+                    },
+                    { 
+                        "title": "Soluções de Sistemas Lineares"
+                        "items": [
+                             { "title": "Método de Jacobi" },
+                             { "title": "Método de Gauss-Seidel" }
+                        ]
+                    },
+                    { 
+                        "title": "Interpolação Polinomial"
+                        "items": [
+                             { "title": "Método de Vandermonde" },
+                             { "title": "Método de Lagrange" },
+                             { "title": "Método da Newton" },
+                        ]
+                    }
                 ]
             }
         ] 
